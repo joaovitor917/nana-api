@@ -1,0 +1,67 @@
+{
+  "_comentario": [
+    "Índices compostos: nenhum por enquanto.",
+    "O Firestore cria sozinho um índice para cada campo, então ordenar o",
+    "diário por dataRegistro já funciona sem declarar nada aqui. Índice",
+    "declarado à mão só é necessário quando a consulta combina dois ou mais",
+    "campos, o que ainda não acontece no app.",
+    "",
+    "fieldOverrides com 'indexes' vazio faz o contrário: DESLIGA o índice",
+    "automático. Usamos isso nos campos pessoais, para que ninguém consiga",
+    "montar uma consulta que varra nome, cidade, sintomas ou autodeclaração.",
+    "Menos índice também significa menos cópia do dado guardada."
+  ],
+  "indexes": [],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "maes",
+      "fieldPath": "nome",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "maes",
+      "fieldPath": "idade",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "maes",
+      "fieldPath": "dataNascimento",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "perfil_acolhimento",
+      "fieldPath": "nomeBebe",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "perfil_acolhimento",
+      "fieldPath": "cidade",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "perfil_acolhimento",
+      "fieldPath": "autodeclaracao",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "diario_cuidado",
+      "fieldPath": "sintomas",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "diario_cuidado",
+      "fieldPath": "descricao",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "mensagens",
+      "fieldPath": "texto",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "membros",
+      "fieldPath": "nome",
+      "indexes": []
+    }
+  ]
+}

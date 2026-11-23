@@ -1,0 +1,17 @@
+# NUNCA versionar: dá acesso total ao banco
+*serviceAccount*.json
+*firebase-adminsdk*.json
+.env
+
+# Dados pessoais exportados
+admin/exportacoes/
+
+node_modules/
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+.firebaserc
+
+# Configuração do app Android, não pertence à API
+testes/google-services.json

@@ -1,0 +1,19 @@
+{
+  "name": "nana-admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Scripts administrativos do Nanã: direitos do titular e expurgo de registros. Rodam na máquina de quem administra, nunca no celular.",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "exportar": "node exportar-dados.js",
+    "excluir": "node excluir-conta.js",
+    "expurgar": "node expurgar-logs.js",
+    "criar-chat": "node criar-chat.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0"
+  }
+}

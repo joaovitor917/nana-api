@@ -1,0 +1,562 @@
+rules_version = '2';
+
+// =============================================================================
+// Nanã — Regras de segurança do Firestore
+//
+// Implementa o documento "Banco de Dados – Nanã", versão 0.2, traduzido do
+// modelo relacional para o jeito do Firestore. Ver docs/MODELO-DE-DADOS.md
+// para o mapeamento entidade por entidade, e docs/REVISAO-DO-DOCUMENTO.md
+// para o que foi mudado em relação ao documento, e por quê.
+//
+// Estas regras rodam nos servidores do Google, não no celular. O aplicativo
+// não consegue ignorá-las nem reescrevê-las, mesmo que alguém altere o APK.
+// Por isso, toda a autorização e toda a validação obrigatória ficam aqui.
+//
+// Princípio geral: nega tudo por padrão.
+// =============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -------------------------------------------------------------------------
+    // Funções auxiliares
+    // -------------------------------------------------------------------------
+
+    function autenticada() {
+      return request.auth != null;
+    }
+
+    // Documento 9, "Permissões": cada mãe vê e edita apenas os próprios dados.
+    // O identificador vem do token assinado pelo Firebase, não de um campo
+    // que o cliente escolhe. É a defesa contra o risco nº 1 da OWASP API.
+    function dona(uid) {
+      return autenticada() && request.auth.uid == uid;
+    }
+
+    function emailVerificado() {
+      return autenticada() && request.auth.token.email_verified == true;
+    }
+
+    function novo() { return request.resource.data; }
+    function antigo() { return resource.data; }
+
+    function texto(campo, limite) {
+      return !(campo in novo())
+        || novo()[campo] == null
+        || (novo()[campo] is string && novo()[campo].size() <= limite);
+    }
+
+    function dataValida(campo) {
+      return !(campo in novo())
+        || novo()[campo] == null
+        || novo()[campo] is timestamp;
+    }
+
+    // Carimbo vindo do relógio do servidor. Um aparelho com a data adulterada
+    // não forja o histórico.
+    function agora(campo) {
+      return novo()[campo] == request.time;
+    }
+
+    // -------------------------------------------------------------------------
+    // Consentimento para dado sensível (LGPD, art. 11, I)
+    //
+    // Dois campos do modelo são dado pessoal sensível:
+    //   - autodeclaracao  → origem racial (art. 5º, II)
+    //   - sintomas        → dado referente à saúde (art. 5º, II)
+    //
+    // Nenhum dos dois pode ser gravado sem um consentimento específico e
+    // vigente registrado para aquela finalidade.
+    // -------------------------------------------------------------------------
+
+    function consentiu(uid, finalidade) {
+      return exists(/databases/$(database)/documents/maes/$(uid)/consentimentos/$(finalidade))
+        && get(/databases/$(database)/documents/maes/$(uid)/consentimentos/$(finalidade)).data.concedido == true;
+    }
+
+    // =========================================================================
+    // Entidade: Mães
+    //
+    // O identificador do documento é o UID do Firebase Authentication.
+    // Não existe campo id_mae, e NÃO existe senha_hash: quem guarda e verifica
+    // a senha é o Firebase Authentication. Ver REVISAO-DO-DOCUMENTO.md.
+    // =========================================================================
+
+    match /maes/{uid} {
+
+      function statusValidos() { return ['ativa', 'inativa', 'encerrada']; }
+
+      function camposDaMae() {
+        return ['nome', 'idade', 'dataNascimento', 'dataCadastro',
+                'atualizadoEm', 'status', 'versaoPolitica'];
+      }
+
+      function maeValida() {
+        return novo().keys().hasOnly(camposDaMae())
+          && texto('nome', 60)
+          && texto('versaoPolitica', 20)
+          // Idade é obrigatória, por decisão da equipe. Precisa combinar com
+          // RegrasCadastro.kt no aplicativo: se divergir, a gravação é
+          // recusada e a usuária leva um erro sem entender o motivo.
+          && novo().idade is int && novo().idade >= 10 && novo().idade <= 70
+          && dataValida('dataNascimento')
+          && novo().status in statusValidos()
+          && agora('atualizadoEm');
+      }
+
+      allow get: if dona(uid);
+
+      // Varrer a coleção é proibido para todo mundo: ninguém lista as mães.
+      allow list: if false;
+
+      allow create: if dona(uid)
+        && emailVerificado()
+        && maeValida()
+        && agora('dataCadastro');
+
+      allow update: if dona(uid)
+        && emailVerificado()
+        && maeValida()
+        && novo().dataCadastro == antigo().dataCadastro          // imutável
+        && antigo().atualizadoEm < request.time - duration.value(3, 's');
+
+      // A mãe pode apagar a própria conta pelo app (LGPD, art. 18, VI).
+      // O Firestore não apaga subcoleção junto com o documento pai, então o
+      // app apaga diário, preferências e perfil ANTES de chegar aqui, e por
+      // último encerra a conta de acesso. A ordem está em MeusDados.kt.
+      //
+      // Os registros de consentimento e de auditoria continuam protegidos
+      // contra exclusão: eles não guardam dado pessoal, só finalidade e data,
+      // e são a prova do que foi aceito (art. 8º, §1º). Para removê-los
+      // também, use o script admin/excluir-conta.js.
+      allow delete: if dona(uid);
+
+      // -----------------------------------------------------------------------
+      // Entidade: Perfis de acolhimento  (relação 1:1 com Mães)
+      //
+      // Documento único, de id fixo "principal". O id fixo é o que garante,
+      // pelo próprio caminho, que não existam dois perfis para a mesma mãe.
+      // -----------------------------------------------------------------------
+      match /perfil_acolhimento/principal {
+
+        function fasesValidas() {
+          return ['GESTACAO', 'POS_PARTO_0_45_DIAS', 'POS_PARTO_46_DIAS_6_MESES',
+                  'MATERNIDADE_6_MESES_1_ANO', 'MATERNIDADE_1_2_ANOS'];
+        }
+
+        // O Nanã é dedicado a mulheres negras. Ver REVISAO-DO-DOCUMENTO.md:
+        // o documento do banco cita mulheres indígenas, o que não bate com o
+        // cadastro do aplicativo. Para incluir, acrescente 'INDIGENA' aqui.
+        function autodeclaracoesValidas() {
+          return ['PRETA', 'PARDA', 'PREFIRO_NAO_DIZER'];
+        }
+
+        function quantidadesValidas() { return ['UM', 'DOIS', 'TRES_OU_MAIS']; }
+
+        function camposDoPerfil() {
+          return ['nomeBebe', 'dataNascimentoBebe', 'fasePosParto', 'cidade',
+                  'quantidadeFilhos', 'autodeclaracao', 'atualizadoEm'];
+        }
+
+        function perfilValido() {
+          return novo().keys().hasOnly(camposDoPerfil())
+            && texto('nomeBebe', 80)
+            && texto('cidade', 60)
+            && dataValida('dataNascimentoBebe')
+            // A fase é necessária: a tela inicial do app depende dela.
+            && novo().fasePosParto in fasesValidas()
+            && (!('quantidadeFilhos' in novo()) || novo().quantidadeFilhos == null
+                || novo().quantidadeFilhos in quantidadesValidas())
+            && (!('autodeclaracao' in novo()) || novo().autodeclaracao == null
+                || novo().autodeclaracao in autodeclaracoesValidas())
+            && agora('atualizadoEm');
+        }
+
+        // Dado sensível: só entra com consentimento registrado.
+        function racaPermitida() {
+          return !('autodeclaracao' in novo())
+            || novo().autodeclaracao == null
+            || consentiu(uid, 'raca_autodeclarada');
+        }
+
+        allow get: if dona(uid);
+        allow create, update: if dona(uid)
+          && emailVerificado()
+          && perfilValido()
+          && racaPermitida();
+        // Parte da exclusão de conta feita pelo app.
+        allow delete: if dona(uid);
+      }
+
+      // -----------------------------------------------------------------------
+      // Entidade: Diário de cuidado  (relação 1:N com Mães)
+      //
+      // Regra 2 do documento: cada registro tem uma data e uma mãe responsável.
+      // Aqui a mãe responsável é o próprio caminho do documento, então não há
+      // como gravar um registro no diário de outra pessoa.
+      //
+      // O campo "sintomas" é dado de saúde, portanto sensível: exige
+      // consentimento específico (LGPD, art. 11, I).
+      // -----------------------------------------------------------------------
+      match /diario_cuidado/{idRegistro} {
+
+        function sentimentosValidos() {
+          return ['BEM', 'CALMA', 'ANSIOSA', 'CANSADA', 'TRISTE'];
+        }
+
+        function camposDoRegistro() {
+          return ['dataRegistro', 'sintomas', 'descricao', 'sentimento',
+                  'criadoEm', 'atualizadoEm'];
+        }
+
+        function registroValido() {
+          return novo().keys().hasOnly(camposDoRegistro())
+            && novo().dataRegistro is string
+            && novo().dataRegistro.matches('^\\d{4}-\\d{2}-\\d{2}$')
+            // O id do documento é a própria data: um registro por dia, sem
+            // precisar de consulta para descobrir se já existe outro.
+            && novo().dataRegistro == idRegistro
+            && texto('sintomas', 500)
+            && texto('descricao', 2000)
+            && (!('sentimento' in novo()) || novo().sentimento == null
+                || novo().sentimento in sentimentosValidos())
+            // Registro vazio não serve para nada e ainda ocupa espaço.
+            && (('sintomas' in novo() && novo().sintomas != null)
+                || ('descricao' in novo() && novo().descricao != null)
+                || ('sentimento' in novo() && novo().sentimento != null))
+            && agora('atualizadoEm');
+        }
+
+        function saudePermitida() {
+          return !('sintomas' in novo())
+            || novo().sintomas == null
+            || consentiu(uid, 'dados_de_saude');
+        }
+
+        allow get, list: if dona(uid);
+        allow create: if dona(uid) && emailVerificado()
+          && registroValido() && saudePermitida() && agora('criadoEm');
+        allow update: if dona(uid) && emailVerificado()
+          && registroValido() && saudePermitida()
+          && novo().criadoEm == antigo().criadoEm;
+        // A mãe pode apagar o que escreveu sobre si mesma.
+        allow delete: if dona(uid) && emailVerificado();
+      }
+
+      // -----------------------------------------------------------------------
+      // Entidade: Preferências de conteúdo  (relação 1:N com Mães)
+      //
+      // Regra 4 do documento: a mãe ativa ou desativa suas categorias.
+      // O id do documento é a categoria, o que impede duas preferências
+      // conflitantes para a mesma categoria.
+      // -----------------------------------------------------------------------
+      match /preferencias_conteudo/{categoria} {
+
+        function categoriasValidas() {
+          return ['AMAMENTACAO', 'SAUDE_MENTAL', 'MEUS_DIREITOS',
+                  'SONO_DO_BEBE', 'REDE_DE_APOIO', 'PARTO'];
+        }
+
+        function preferenciaValida() {
+          return novo().keys().hasOnly(['categoria', 'ativo', 'atualizadoEm'])
+            && novo().categoria == categoria
+            && categoria in categoriasValidas()
+            && novo().ativo is bool
+            && agora('atualizadoEm');
+        }
+
+        allow get, list: if dona(uid);
+        allow create, update: if dona(uid) && emailVerificado() && preferenciaValida();
+        allow delete: if dona(uid) && emailVerificado();
+      }
+
+      // -----------------------------------------------------------------------
+      // Consentimentos (LGPD, art. 8º)
+      //
+      // Não está no documento do grupo, e é o que torna possível tratar os
+      // dados sensíveis que o documento prevê. Ver REVISAO-DO-DOCUMENTO.md.
+      //
+      // Finalidades usadas pelas regras acima:
+      //   raca_autodeclarada → campo autodeclaracao
+      //   dados_de_saude     → campo sintomas
+      //
+      // Revogar é gravar de novo com concedido = false, o que a LGPD exige
+      // que seja tão simples quanto consentir (art. 8º, §5º).
+      // -----------------------------------------------------------------------
+      match /consentimentos/{finalidade} {
+
+        function finalidadesValidas() {
+          return ['raca_autodeclarada', 'dados_de_saude'];
+        }
+
+        function consentimentoValido() {
+          return novo().keys().hasOnly(['finalidade', 'concedido', 'versaoTexto', 'registradoEm'])
+            && novo().finalidade == finalidade
+            && finalidade in finalidadesValidas()
+            && novo().concedido is bool
+            && novo().versaoTexto is string
+            && novo().versaoTexto.size() <= 20
+            && agora('registradoEm');
+        }
+
+        allow get, list: if dona(uid);
+        allow create, update: if dona(uid) && consentimentoValido();
+        allow delete: if false;
+      }
+
+      // Histórico imutável das decisões de consentimento. É a prova do que foi
+      // aceito e quando (art. 8º, §1º).
+      match /consentimentos_historico/{eventoId} {
+        allow get, list: if dona(uid);
+        allow create: if dona(uid)
+          && novo().keys().hasOnly(['finalidade', 'concedido', 'versaoTexto', 'registradoEm'])
+          && agora('registradoEm');
+        allow update, delete: if false;
+      }
+
+      // -----------------------------------------------------------------------
+      // Auditoria
+      //
+      // Marco Civil, art. 15: guarda dos registros de acesso por 6 meses.
+      // Decreto 8.771/2016, art. 13: guarda com segurança e acesso restrito.
+      //
+      // Grava só o NOME dos campos tocados, nunca o valor: um log não deve
+      // virar uma segunda cópia dos dados pessoais.
+      //
+      // Somente criação. O expurgo após 6 meses é feito pelo script
+      // administrativo.
+      // -----------------------------------------------------------------------
+      match /auditoria/{eventoId} {
+
+        function acoesValidas() {
+          return ['CADASTRO_CRIADO', 'PERFIL_ATUALIZADO', 'PERFIL_LIDO',
+                  'DIARIO_REGISTRADO', 'DIARIO_APAGADO', 'PREFERENCIAS_ALTERADAS',
+                  'DADOS_EXPORTADOS', 'CONSENTIMENTO_ALTERADO', 'SESSAO_INICIADA'];
+        }
+
+        function eventoValido() {
+          return novo().keys().hasOnly(['acao', 'campos', 'registradoEm', 'origem'])
+            && novo().acao in acoesValidas()
+            && agora('registradoEm')
+            && (!('campos' in novo())
+                || (novo().campos is list && novo().campos.size() <= 12))
+            && texto('origem', 40);
+        }
+
+        allow get, list: if dona(uid);
+        allow create: if dona(uid) && eventoValido();
+        allow update, delete: if false;
+      }
+    }
+
+    // =========================================================================
+    // Entidades: Conversas e Mensagens  (Mães N:N Conversas)
+    //
+    // Chats em grupo da aba Apoio. Estrutura:
+    //
+    //   chats/{chatId}                       nome, participantes, criadoEm
+    //   ├── membros/{uid}                    quem participa (a relação N:N)
+    //   ├── mensagens/{uid_entrada_n}        o que foi escrito
+    //   └── digitando/{uid}                  o "..." de quem está escrevendo
+    //
+    // Regra 5 do documento: só quem participa da conversa lê as mensagens.
+    // A participação é o documento membros/{uid}, e o uid vem do token,
+    // então ninguém entra em nome de outra pessoa.
+    //
+    // Os chats são criados pela equipe (admin/criar-chat.js). O aplicativo
+    // não cria nem renomeia chat.
+    // =========================================================================
+
+    match /chats/{chatId} {
+
+      function caminhoMembro(u) {
+        return /databases/$(database)/documents/chats/$(chatId)/membros/$(u);
+      }
+
+      function souMembro() {
+        return autenticada() && exists(caminhoMembro(request.auth.uid));
+      }
+
+      function chatAntes() {
+        return get(/databases/$(database)/documents/chats/$(chatId)).data;
+      }
+
+      function chatDepois() {
+        return getAfter(/databases/$(database)/documents/chats/$(chatId)).data;
+      }
+
+      // Qualquer usuária com e-mail verificado vê a lista de chats, para poder
+      // escolher em qual entrar. O documento do chat não tem dado pessoal:
+      // só o nome do grupo e quantas pessoas participam.
+      allow get, list: if emailVerificado();
+
+      // A única mudança que o app faz no chat é o contador de participantes,
+      // e só junto com a própria entrada ou saída, na mesma gravação.
+      allow update: if emailVerificado()
+        && novo().diff(antigo()).affectedKeys().hasOnly(['participantes'])
+        && (
+          (novo().participantes == antigo().participantes + 1
+            && !exists(caminhoMembro(request.auth.uid))
+            && existsAfter(caminhoMembro(request.auth.uid)))
+          ||
+          (novo().participantes == antigo().participantes - 1
+            && exists(caminhoMembro(request.auth.uid))
+            && !existsAfter(caminhoMembro(request.auth.uid)))
+        );
+
+      allow create, delete: if false;
+
+      // -----------------------------------------------------------------------
+      // Participantes
+      //
+      // "nome" é o que as outras participantes veem. Fica nulo quando a mãe
+      // desliga "Mostrar meu nome nos chats" em Privacidade, e aí o app mostra
+      // "Participante".
+      //
+      // "enviadas" e "ultimaMensagemEm" existem para o limite de envio
+      // (OWASP API4): ver a regra das mensagens.
+      // -----------------------------------------------------------------------
+      match /membros/{membroId} {
+
+        function camposDoMembro() {
+          return ['nome', 'entrouEm', 'lidoEm', 'ultimaMensagemEm', 'enviadas'];
+        }
+
+        // A própria mãe sempre pode ler o próprio documento, mesmo antes de
+        // entrar: é assim que o app descobre se ela já participa.
+        allow get: if dona(membroId) || souMembro();
+        allow list: if souMembro();
+
+        allow create: if dona(membroId)
+          && emailVerificado()
+          && exists(/databases/$(database)/documents/chats/$(chatId))
+          && novo().keys().hasOnly(camposDoMembro())
+          && novo().keys().hasAll(['entrouEm', 'lidoEm', 'enviadas'])
+          && texto('nome', 60)
+          && agora('entrouEm')
+          && agora('lidoEm')
+          && novo().enviadas == 0
+          && (!('ultimaMensagemEm' in novo()) || novo().ultimaMensagemEm == null)
+          && chatDepois().participantes == chatAntes().participantes + 1;
+
+        allow update: if dona(membroId)
+          && emailVerificado()
+          && novo().keys().hasOnly(camposDoMembro())
+          && novo().diff(antigo()).affectedKeys()
+               .hasOnly(['nome', 'lidoEm', 'ultimaMensagemEm', 'enviadas'])
+          && texto('nome', 60)
+          && novo().entrouEm == antigo().entrouEm
+          && (!novo().diff(antigo()).affectedKeys().hasAny(['lidoEm']) || agora('lidoEm'))
+          // O contador só anda de um em um, e sempre junto com uma mensagem.
+          && (
+            (novo().enviadas == antigo().enviadas
+              && !novo().diff(antigo()).affectedKeys().hasAny(['ultimaMensagemEm']))
+            ||
+            (novo().enviadas == antigo().enviadas + 1
+              && agora('ultimaMensagemEm')
+              && existsAfter(/databases/$(database)/documents/chats/$(chatId)/mensagens/$(
+                   membroId + '_' + string(antigo().entrouEm.toMillis()) + '_' + string(novo().enviadas))))
+          );
+
+        // Sair do chat. Precisa vir junto com o contador de participantes.
+        allow delete: if dona(membroId)
+          && chatDepois().participantes == chatAntes().participantes - 1;
+      }
+
+      // -----------------------------------------------------------------------
+      // Mensagens
+      //
+      // Regra 5: só participantes leem.
+      //
+      // Limite de envio: uma mensagem a cada 2 segundos por pessoa. O id da
+      // mensagem é "{uid}_{entrada}_{n}", onde n é o contador "enviadas" da
+      // participante. Como o contador só pode subir um por gravação, duas
+      // mensagens na mesma gravação teriam o mesmo id: não dá para mandar
+      // centenas de uma vez num lote.
+      // -----------------------------------------------------------------------
+      match /mensagens/{mensagemId} {
+
+        function membroAntes() { return get(caminhoMembro(request.auth.uid)).data; }
+        function membroDepois() { return getAfter(caminhoMembro(request.auth.uid)).data; }
+
+        function idEsperado() {
+          return request.auth.uid + '_' + string(membroAntes().entrouEm.toMillis())
+            + '_' + string(membroDepois().enviadas);
+        }
+
+        allow get, list: if souMembro()
+          // Fora do chat, a mãe ainda alcança as PRÓPRIAS mensagens, para
+          // poder apagá-las ao excluir a conta (LGPD, art. 18, VI).
+          || (autenticada() && resource.data.autora == request.auth.uid);
+
+        allow create: if emailVerificado()
+          && souMembro()
+          && novo().keys().hasOnly(['autora', 'texto', 'enviadaEm', 'curtidas'])
+          && novo().autora == request.auth.uid
+          && novo().texto is string
+          && novo().texto.trim().size() > 0
+          && novo().texto.size() <= 1000
+          && agora('enviadaEm')
+          && novo().curtidas == []
+          && mensagemId == idEsperado()
+          && membroDepois().enviadas == membroAntes().enviadas + 1
+          && membroDepois().ultimaMensagemEm == request.time
+          && (!('ultimaMensagemEm' in membroAntes())
+              || membroAntes().ultimaMensagemEm == null
+              || membroAntes().ultimaMensagemEm < request.time - duration.value(2, 's'));
+
+        // Curtir ou descurtir: qualquer participante, mexendo só no próprio
+        // uid dentro da lista, e em nada mais da mensagem.
+        allow update: if emailVerificado()
+          && souMembro()
+          && novo().diff(antigo()).affectedKeys().hasOnly(['curtidas'])
+          && novo().curtidas is list
+          && novo().curtidas.size() <= 1000
+          && (
+            (novo().curtidas.toSet().difference(antigo().curtidas.toSet()) == [request.auth.uid].toSet()
+              && antigo().curtidas.toSet().difference(novo().curtidas.toSet()).size() == 0
+              && novo().curtidas.size() == antigo().curtidas.size() + 1)
+            ||
+            (antigo().curtidas.toSet().difference(novo().curtidas.toSet()) == [request.auth.uid].toSet()
+              && novo().curtidas.toSet().difference(antigo().curtidas.toSet()).size() == 0
+              && novo().curtidas.size() == antigo().curtidas.size() - 1)
+          );
+
+        // Só a autora apaga. Usado na exclusão de conta.
+        allow delete: if autenticada() && antigo().autora == request.auth.uid;
+      }
+
+      // -----------------------------------------------------------------------
+      // Quem está digitando
+      //
+      // Um documento por participante, com a hora da última tecla. O app só
+      // mostra o "..." se essa hora for recente. Gravação limitada a uma a
+      // cada 3 segundos.
+      // -----------------------------------------------------------------------
+      match /digitando/{membroId} {
+        allow get, list: if souMembro();
+        allow create: if dona(membroId) && emailVerificado() && souMembro()
+          && novo().keys().hasOnly(['em']) && agora('em');
+        allow update: if dona(membroId) && emailVerificado() && souMembro()
+          && novo().keys().hasOnly(['em']) && agora('em')
+          && antigo().em < request.time - duration.value(3, 's');
+        allow delete: if dona(membroId);
+      }
+    }
+
+    // =========================================================================
+    // Fora do escopo desta etapa
+    //
+    // Consultas e Conteúdos estão no documento do grupo, mas ainda não têm
+    // tela no aplicativo. Ficam negados até serem feitos: coleção aberta
+    // "para depois" é como banco de dados vaza.
+    //
+    // Atenção para quando forem implementados: conteúdos devem aparecer
+    // somente quando publicados (Regra 6).
+    // =========================================================================
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

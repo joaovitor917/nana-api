@@ -1,0 +1,17 @@
+rules_version = '2';
+
+// O Nanã não guarda arquivos: não há foto de perfil nem anexos.
+// Deixar o Storage aberto por padrão é uma das formas mais comuns de
+// vazamento em projetos Firebase, então ele fica fechado por completo.
+// (OWASP API8: configuração indevida de segurança.)
+//
+// Se um dia a equipe decidir guardar arquivos, estas regras precisam ser
+// reescritas com o mesmo cuidado das regras do Firestore.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
