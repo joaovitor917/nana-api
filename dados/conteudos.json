@@ -1,0 +1,230 @@
+[
+  {
+    "id": "hipertensao-e-pre-eclampsia",
+    "titulo": "Pressão alta na gravidez e pré-eclâmpsia",
+    "categoria": "SAUDE_NA_GESTACAO",
+    "descricao": "O que é a hipertensão gestacional, por que ela pode evoluir para pré-eclâmpsia e por que acompanhar a pressão no pré-natal faz diferença.",
+    "texto": "A hipertensão gestacional pode surgir após a 20ª semana de gestação e está associada a riscos para a mãe e para o bebê.\n\nSe não for controlada, pode evoluir para pré-eclâmpsia: pressão muito alta com danos a órgãos. A pré-eclâmpsia aumenta o risco de complicações graves, como eclâmpsia e síndrome HELLP, que podem exigir a antecipação do parto para proteger a mãe e o bebê. Também são citados o descolamento prematuro da placenta e a restrição do crescimento do bebê.\n\nO cuidado inclui medir a pressão com frequência, mudanças no dia a dia e, quando necessário, remédios para a pressão. Os estudos mostram que descobrir cedo e acompanhar bem reduz muito o risco de complicações graves.\n\nNo Brasil, as doenças hipertensivas estão entre as causas mais comuns de internação na gravidez e de morbidade materna grave.\n\nSinais de problemas do coração e da pressão podem ser confundidos com cansaço, inchaço ou palpitações. Se algo parecer diferente, conte à sua equipe de saúde.\n\nEste conteúdo é informativo e não substitui o acompanhamento com a equipe de saúde.",
+    "fontes": [
+      {
+        "referencia": "LIMA, M. M. et al. Complicações obstétricas e ginecológicas associadas à gravidez. Periódicos Brasil. Pesquisa Científica, v. 5, n. 3, p. 1514-1523, 2024.",
+        "tipo": "Revisão de literatura",
+        "doi": "10.36557/pbpc.v3i2.195",
+        "url": "https://doi.org/10.36557/pbpc.v3i2.195"
+      },
+      {
+        "referencia": "PEDRAZA, D. F.; LINS, A. C. L. Complicações clínicas na gravidez: uma revisão sistemática de estudos com gestantes brasileiras. Ciência & Saúde Coletiva, v. 26, supl. 3, p. 5329-5350, 2021.",
+        "tipo": "Revisão sistemática",
+        "doi": "10.1590/1413-812320212611.3.33202019",
+        "url": "https://www.scielo.br/j/csc/a/vQJ3Y9FwQ8tBdsRH6k6ttwH/?lang=pt"
+      },
+      {
+        "referencia": "COMPLEXO HOSPITALAR DE NITERÓI. Quais as patologias consideradas na avaliação de uma gestante? Blog do CHN, 2026.",
+        "tipo": "Texto informativo de hospital",
+        "doi": null,
+        "url": "https://www.chniteroi.com.br/blog/quais_as_patologias_que_devem_ser_rotineiramente_consideradas_na_avaliacao_de_uma_gestante/"
+      }
+    ],
+    "tipo": "ARTIGO",
+    "status": "publicado",
+    "ordem": 1
+  },
+  {
+    "id": "diabetes-gestacional",
+    "titulo": "Diabetes gestacional",
+    "categoria": "SAUDE_NA_GESTACAO",
+    "descricao": "Como o diabetes gestacional aparece, como é descoberto e por que o acompanhamento continua depois do parto.",
+    "texto": "O diabetes gestacional se desenvolve durante a gravidez e é caracterizado por açúcar (glicose) alto no sangue.\n\nEle não tem sintomas específicos: é descoberto pelos exames de sangue de rotina do pré-natal. Histórico na família, obesidade e ganho de peso excessivo são apontados como fatores ligados ao seu aparecimento.\n\nPode levar a complicações como bebê muito grande (macrossomia), parto cesáreo e glicose baixa no bebê logo após o nascimento.\n\nO controle envolve medir a glicose com frequência, ajustar a alimentação e, se necessário, usar insulina.\n\nQuem teve diabetes gestacional tem mais risco de desenvolver diabetes tipo 2 no futuro. Por isso, o acompanhamento depois do parto também é importante.\n\nEste conteúdo é informativo e não substitui o acompanhamento com a equipe de saúde.",
+    "fontes": [
+      {
+        "referencia": "LIMA, M. M. et al. Complicações obstétricas e ginecológicas associadas à gravidez. Periódicos Brasil. Pesquisa Científica, v. 5, n. 3, p. 1514-1523, 2024.",
+        "tipo": "Revisão de literatura",
+        "doi": "10.36557/pbpc.v3i2.195",
+        "url": "https://doi.org/10.36557/pbpc.v3i2.195"
+      },
+      {
+        "referencia": "COMPLEXO HOSPITALAR DE NITERÓI. Quais as patologias consideradas na avaliação de uma gestante? Blog do CHN, 2026.",
+        "tipo": "Texto informativo de hospital",
+        "doi": null,
+        "url": "https://www.chniteroi.com.br/blog/quais_as_patologias_que_devem_ser_rotineiramente_consideradas_na_avaliacao_de_uma_gestante/"
+      }
+    ],
+    "tipo": "ARTIGO",
+    "status": "publicado",
+    "ordem": 2
+  },
+  {
+    "id": "hemorragia-pos-parto",
+    "titulo": "Sangramento depois do parto",
+    "categoria": "POS_PARTO",
+    "descricao": "A hemorragia pós-parto é uma das principais causas de complicação materna. Entenda o que a provoca e como é tratada.",
+    "texto": "A hemorragia pós-parto pode acontecer logo após o nascimento e é uma das principais causas de morbidade e mortalidade materna.\n\nAs causas mais comuns são o útero não se contrair bem depois do parto (atonia uterina), lacerações no canal do parto e problemas de coagulação.\n\nReconhecer cedo os fatores de risco e agir rápido é essencial. O tratamento inclui remédios que ajudam o útero a se contrair e o controle do volume de sangramento. Em casos graves, pode ser preciso cirurgia.\n\nEstudos com gestantes brasileiras associam a hemorragia, junto com a pressão alta, aos casos de morbidade materna grave.\n\nEste conteúdo é informativo e não substitui o acompanhamento com a equipe de saúde.",
+    "fontes": [
+      {
+        "referencia": "LIMA, M. M. et al. Complicações obstétricas e ginecológicas associadas à gravidez. Periódicos Brasil. Pesquisa Científica, v. 5, n. 3, p. 1514-1523, 2024.",
+        "tipo": "Revisão de literatura",
+        "doi": "10.36557/pbpc.v3i2.195",
+        "url": "https://doi.org/10.36557/pbpc.v3i2.195"
+      },
+      {
+        "referencia": "PEDRAZA, D. F.; LINS, A. C. L. Complicações clínicas na gravidez: uma revisão sistemática de estudos com gestantes brasileiras. Ciência & Saúde Coletiva, v. 26, supl. 3, p. 5329-5350, 2021.",
+        "tipo": "Revisão sistemática",
+        "doi": "10.1590/1413-812320212611.3.33202019",
+        "url": "https://www.scielo.br/j/csc/a/vQJ3Y9FwQ8tBdsRH6k6ttwH/?lang=pt"
+      }
+    ],
+    "tipo": "ARTIGO",
+    "status": "publicado",
+    "ordem": 3
+  },
+  {
+    "id": "parto-prematuro",
+    "titulo": "Parto prematuro",
+    "categoria": "SAUDE_NA_GESTACAO",
+    "descricao": "O que é o parto prematuro, o que aumenta o risco e o que pode ser feito.",
+    "texto": "O parto prematuro é o nascimento antes de 37 semanas de gestação. Ele é a principal causa de adoecimento e morte de recém-nascidos e pode trazer dificuldades para respirar e problemas de desenvolvimento.\n\nEntre os fatores de risco estão infecções, pressão alta, diabetes e gravidez de gêmeos ou mais bebês.\n\nQuando há risco, a equipe pode usar corticoides para ajudar os pulmões do bebê a amadurecer e remédios para segurar o trabalho de parto. Acompanhar de perto a gestante e cuidar das condições associadas melhora os resultados para o bebê.\n\nEste conteúdo é informativo e não substitui o acompanhamento com a equipe de saúde.",
+    "fontes": [
+      {
+        "referencia": "LIMA, M. M. et al. Complicações obstétricas e ginecológicas associadas à gravidez. Periódicos Brasil. Pesquisa Científica, v. 5, n. 3, p. 1514-1523, 2024.",
+        "tipo": "Revisão de literatura",
+        "doi": "10.36557/pbpc.v3i2.195",
+        "url": "https://doi.org/10.36557/pbpc.v3i2.195"
+      }
+    ],
+    "tipo": "ARTIGO",
+    "status": "publicado",
+    "ordem": 4
+  },
+  {
+    "id": "miomas-e-endometriose",
+    "titulo": "Miomas e endometriose na gravidez",
+    "categoria": "SAUDE_NA_GESTACAO",
+    "descricao": "Condições que existiam antes da gravidez e que pedem acompanhamento durante a gestação.",
+    "texto": "Miomas são tumores benignos do útero. Na gravidez, podem aumentar o risco de aborto espontâneo e parto prematuro. O tamanho e o lugar do mioma influenciam esse risco. O cuidado inclui acompanhamento regular e, em alguns casos, cirurgia.\n\nNa endometriose, um tecido parecido com o que reveste o útero cresce fora dele. Pode causar dor intensa e está associada a complicações como placenta prévia e descolamento prematuro da placenta.\n\nDurante a gravidez, o cuidado costuma combinar o tratamento dos sintomas com acompanhamento atento.\n\nEste conteúdo é informativo e não substitui o acompanhamento com a equipe de saúde.",
+    "fontes": [
+      {
+        "referencia": "LIMA, M. M. et al. Complicações obstétricas e ginecológicas associadas à gravidez. Periódicos Brasil. Pesquisa Científica, v. 5, n. 3, p. 1514-1523, 2024.",
+        "tipo": "Revisão de literatura",
+        "doi": "10.36557/pbpc.v3i2.195",
+        "url": "https://doi.org/10.36557/pbpc.v3i2.195"
+      }
+    ],
+    "tipo": "ARTIGO",
+    "status": "publicado",
+    "ordem": 5
+  },
+  {
+    "id": "anemia-e-infeccoes",
+    "titulo": "Anemia e infecções na gestação",
+    "categoria": "SAUDE_NA_GESTACAO",
+    "descricao": "Infecção urinária e anemia estão entre as causas mais comuns de internação de gestantes no Brasil.",
+    "texto": "No Brasil, infecção urinária, anemia e pressão alta são as causas mais comuns de internação durante a gravidez. Por isso, uma revisão de estudos recomenda que essas três condições sejam alvos principais de prevenção e tratamento.\n\nA anemia por falta de ferro pode causar tontura, fraqueza, dor de cabeça, queda de cabelo, palidez e perda de apetite. Se esses sintomas continuarem, procure avaliação médica.\n\nInfecções na gravidez, como a infecção urinária e a infecção pelo estreptococo do grupo B, podem ter consequências sérias se não forem diagnosticadas e tratadas. Descobrir cedo e tratar direito protege você e o bebê.\n\nEste conteúdo é informativo e não substitui o acompanhamento com a equipe de saúde.",
+    "fontes": [
+      {
+        "referencia": "PEDRAZA, D. F.; LINS, A. C. L. Complicações clínicas na gravidez: uma revisão sistemática de estudos com gestantes brasileiras. Ciência & Saúde Coletiva, v. 26, supl. 3, p. 5329-5350, 2021.",
+        "tipo": "Revisão sistemática",
+        "doi": "10.1590/1413-812320212611.3.33202019",
+        "url": "https://www.scielo.br/j/csc/a/vQJ3Y9FwQ8tBdsRH6k6ttwH/?lang=pt"
+      },
+      {
+        "referencia": "COMPLEXO HOSPITALAR DE NITERÓI. Quais as patologias consideradas na avaliação de uma gestante? Blog do CHN, 2026.",
+        "tipo": "Texto informativo de hospital",
+        "doi": null,
+        "url": "https://www.chniteroi.com.br/blog/quais_as_patologias_que_devem_ser_rotineiramente_consideradas_na_avaliacao_de_uma_gestante/"
+      },
+      {
+        "referencia": "LIMA, M. M. et al. Complicações obstétricas e ginecológicas associadas à gravidez. Periódicos Brasil. Pesquisa Científica, v. 5, n. 3, p. 1514-1523, 2024.",
+        "tipo": "Revisão de literatura",
+        "doi": "10.36557/pbpc.v3i2.195",
+        "url": "https://doi.org/10.36557/pbpc.v3i2.195"
+      }
+    ],
+    "tipo": "ARTIGO",
+    "status": "publicado",
+    "ordem": 6
+  },
+  {
+    "id": "o-que-o-pre-natal-avalia",
+    "titulo": "O que o pré-natal avalia",
+    "categoria": "SAUDE_NA_GESTACAO",
+    "descricao": "Por que começar o pré-natal cedo e o que a equipe de saúde observa ao longo da gestação.",
+    "texto": "O pré-natal deve começar assim que a gravidez for confirmada: quanto mais cedo, melhor.\n\nInchaço, enjoo, cólicas, sono e cansaço são comuns no começo da gravidez. Mas, junto com outros sintomas, podem ser um sinal de alerta. Conte tudo o que sentir.\n\nEntre as condições observadas estão a anemia, a pressão alta e a pré-eclâmpsia, outros problemas do coração, o diabetes gestacional e alterações no bebê que só aparecem nos exames.\n\nDependendo da sua saúde, você pode ser encaminhada para especialistas, como cardiologia (coração e pressão), endocrinologia (tireoide, obesidade, diabetes), reumatologia (lúpus, artrite reumatoide) ou neurologia.\n\nEste conteúdo é informativo e não substitui o acompanhamento com a equipe de saúde.",
+    "fontes": [
+      {
+        "referencia": "COMPLEXO HOSPITALAR DE NITERÓI. Quais as patologias consideradas na avaliação de uma gestante? Blog do CHN, 2026.",
+        "tipo": "Texto informativo de hospital",
+        "doi": null,
+        "url": "https://www.chniteroi.com.br/blog/quais_as_patologias_que_devem_ser_rotineiramente_consideradas_na_avaliacao_de_uma_gestante/"
+      }
+    ],
+    "tipo": "ARTIGO",
+    "status": "publicado",
+    "ordem": 7
+  },
+  {
+    "id": "complicacoes-em-gestantes-brasileiras",
+    "titulo": "Complicações na gravidez: o que os estudos brasileiros mostram",
+    "categoria": "SAUDE_NA_GESTACAO",
+    "descricao": "Uma revisão de 39 estudos com gestantes brasileiras mostra quais complicações são mais frequentes e quem é mais afetada.",
+    "texto": "Uma revisão sistemática reuniu estudos com gestantes brasileiras publicados entre 2010 e 2018.\n\nAs complicações mais estudadas foram transtornos mentais, doenças infecciosas e morbidade materna grave (quando a gestante passa por uma complicação que coloca a vida em risco). Os casos de morbidade materna grave variaram de 9,37 a 41,1 a cada mil nascidos vivos, conforme o estudo.\n\nOs fatores mais ligados a essas complicações foram idade muito jovem ou mais avançada, menor escolaridade, vulnerabilidade socioeconômica, raça/cor e atendimento na rede pública. Gestantes não brancas tiveram mais infecções sexualmente transmissíveis e mais morbidade materna grave.\n\nRaça é uma categoria social, não uma condição biológica. As desigualdades de raça, gênero e classe produzem diferenças profundas na saúde.\n\nA conclusão dos autores é que complicações potencialmente graves são frequentes entre gestantes no Brasil, o que mostra a importância da atenção básica e de ações para reduzi-las.\n\nEste conteúdo é informativo e não substitui o acompanhamento com a equipe de saúde.",
+    "fontes": [
+      {
+        "referencia": "PEDRAZA, D. F.; LINS, A. C. L. Complicações clínicas na gravidez: uma revisão sistemática de estudos com gestantes brasileiras. Ciência & Saúde Coletiva, v. 26, supl. 3, p. 5329-5350, 2021.",
+        "tipo": "Revisão sistemática",
+        "doi": "10.1590/1413-812320212611.3.33202019",
+        "url": "https://www.scielo.br/j/csc/a/vQJ3Y9FwQ8tBdsRH6k6ttwH/?lang=pt"
+      },
+      {
+        "referencia": "SANTANA, A. T. et al. Racismo obstétrico, um debate em construção no Brasil: percepções de mulheres negras sobre a violência obstétrica. Ciência & Saúde Coletiva, v. 29, n. 9, e09952023, 2024.",
+        "tipo": "Pesquisa qualitativa",
+        "doi": "10.1590/1413-81232024299.09952023",
+        "url": "https://www.scielosp.org/article/csc/2024.v29n9/e09952023/"
+      }
+    ],
+    "tipo": "ARTIGO",
+    "status": "publicado",
+    "ordem": 8
+  },
+  {
+    "id": "saude-mental-na-gestacao",
+    "titulo": "Saúde mental na gestação",
+    "categoria": "SAUDE_MENTAL",
+    "descricao": "Sofrimento emocional na gravidez é comum e merece cuidado.",
+    "texto": "Nos estudos com gestantes brasileiras, a frequência de transtornos mentais variou de 7% a 41,7%.\n\nNão ter companheiro, sofrer violência psicológica e já ter tido outros filhos foram fatores associados.\n\nDepressão pós-parto e psicose pós-parto aparecem entre as possíveis consequências quando esse sofrimento não é cuidado. Falar sobre como você está se sentindo, no pré-natal e depois do parto, faz parte do cuidado.\n\nEste conteúdo é informativo e não substitui o acompanhamento com a equipe de saúde.",
+    "fontes": [
+      {
+        "referencia": "PEDRAZA, D. F.; LINS, A. C. L. Complicações clínicas na gravidez: uma revisão sistemática de estudos com gestantes brasileiras. Ciência & Saúde Coletiva, v. 26, supl. 3, p. 5329-5350, 2021.",
+        "tipo": "Revisão sistemática",
+        "doi": "10.1590/1413-812320212611.3.33202019",
+        "url": "https://www.scielo.br/j/csc/a/vQJ3Y9FwQ8tBdsRH6k6ttwH/?lang=pt"
+      }
+    ],
+    "tipo": "ARTIGO",
+    "status": "publicado",
+    "ordem": 9
+  },
+  {
+    "id": "racismo-obstetrico",
+    "titulo": "Racismo obstétrico: o que é e o que os dados mostram",
+    "categoria": "MEUS_DIREITOS",
+    "descricao": "Mulheres negras são as que mais sofrem violência obstétrica no Brasil. Conhecer os dados ajuda a reconhecer e a exigir um atendimento respeitoso.",
+    "texto": "Racismo obstétrico é o encontro entre a violência obstétrica e o racismo na saúde. O termo foi criado pela pesquisadora Dána-Ain Davis.\n\nSegundo a pesquisa nacional Nascer no Brasil, citada no estudo, mulheres negras têm chance maior de passar por: pré-natal inadequado (62% maior), falta de vínculo com a maternidade (23% maior), ausência de acompanhante no parto (67% maior) e peregrinação entre serviços antes do parto (33% maior). O estudo também relata que 49% das episiotomias feitas em mulheres negras foram realizadas sem anestesia local.\n\nUma pesquisa ouviu 25 mulheres em uma maternidade pública de Salvador (BA). Os relatos mostram como raça, gênero e classe atravessam as experiências de violência no parto.\n\nUma dissertação da Fiocruz também ouviu 13 mulheres negras atendidas em um hospital público de Feira de Santana (BA) sobre o pré-natal, o parto e o pós-parto.\n\nO estudo de Salvador conclui que o racismo obstétrico nega direitos reprodutivos e dificulta o acesso a um atendimento respeitoso e igual para mulheres negras, e defendem um cuidado que considere esses determinantes sociais e políticas públicas antirracistas.\n\nVocê tem direito a acompanhante, a informação e a um atendimento digno. Veja mais na área Direitos.\n\nEste conteúdo é informativo e não substitui o acompanhamento com a equipe de saúde.",
+    "fontes": [
+      {
+        "referencia": "SANTANA, A. T. et al. Racismo obstétrico, um debate em construção no Brasil: percepções de mulheres negras sobre a violência obstétrica. Ciência & Saúde Coletiva, v. 29, n. 9, e09952023, 2024.",
+        "tipo": "Pesquisa qualitativa",
+        "doi": "10.1590/1413-81232024299.09952023",
+        "url": "https://www.scielosp.org/article/csc/2024.v29n9/e09952023/"
+      },
+      {
+        "referencia": "OLIVEIRA, E. H. S. A. Mulheres negras vítimas de violência obstétrica: estudo em um hospital público de Feira de Santana - Bahia. Dissertação (Mestrado em Ciências) – Instituto Fernandes Figueira, Fiocruz, Rio de Janeiro, 2018.",
+        "tipo": "Dissertação de mestrado",
+        "doi": null,
+        "url": "https://arca.fiocruz.br/items/a6eb4a82-6849-4a88-88e5-f2d30577da70"
+      }
+    ],
+    "tipo": "ARTIGO",
+    "status": "publicado",
+    "ordem": 10
+  }
+]

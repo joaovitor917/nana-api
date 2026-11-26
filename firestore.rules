@@ -93,7 +93,10 @@ service cloud.firestore {
 
       function maeValida() {
         return novo().keys().hasOnly(camposDaMae())
-          && texto('nome', 60)
+          // Nome é obrigatório, por decisão da equipe (RegrasCadastro.kt).
+          && novo().nome is string
+          && novo().nome.trim().size() > 0
+          && novo().nome.size() <= 60
           && texto('versaoPolitica', 20)
           // Idade é obrigatória, por decisão da equipe. Precisa combinar com
           // RegrasCadastro.kt no aplicativo: se divergir, a gravação é
@@ -545,14 +548,28 @@ service cloud.firestore {
     }
 
     // =========================================================================
+    // Entidade: Conteúdos
+    //
+    // Materiais educativos escritos pela equipe, com base em fontes
+    // científicas citadas em cada documento (campo "fontes").
+    //
+    // Regra 6 do documento: só conteúdo publicado aparece. Quem lê precisa
+    // ter e-mail verificado, e a consulta precisa filtrar status == 'publicado'
+    // para ser aceita. O app nunca escreve aqui: a carga é feita pela equipe
+    // com admin/importar-conteudos.js (Admin SDK).
+    // =========================================================================
+
+    match /conteudos/{conteudoId} {
+      allow get, list: if emailVerificado() && resource.data.status == 'publicado';
+      allow write: if false;
+    }
+
+    // =========================================================================
     // Fora do escopo desta etapa
     //
-    // Consultas e Conteúdos estão no documento do grupo, mas ainda não têm
-    // tela no aplicativo. Ficam negados até serem feitos: coleção aberta
-    // "para depois" é como banco de dados vaza.
-    //
-    // Atenção para quando forem implementados: conteúdos devem aparecer
-    // somente quando publicados (Regra 6).
+    // Consultas estão no documento do grupo, mas ainda não têm tela no
+    // aplicativo. Ficam negadas até serem feitas: coleção aberta "para
+    // depois" é como banco de dados vaza.
     // =========================================================================
 
     match /{document=**} {

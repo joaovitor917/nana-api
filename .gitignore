@@ -1,4 +1,5 @@
 # NUNCA versionar: dá acesso total ao banco
+chave/
 *serviceAccount*.json
 *firebase-adminsdk*.json
 .env

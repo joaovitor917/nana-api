@@ -11,7 +11,8 @@
     "exportar": "node exportar-dados.js",
     "excluir": "node excluir-conta.js",
     "expurgar": "node expurgar-logs.js",
-    "criar-chat": "node criar-chat.js"
+    "criar-chat": "node criar-chat.js",
+    "importar-conteudos": "node importar-conteudos.js"
   },
   "dependencies": {
     "firebase-admin": "^12.7.0"

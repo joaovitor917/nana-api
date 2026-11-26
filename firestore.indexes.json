@@ -1,6 +1,6 @@
 {
   "_comentario": [
-    "Índices compostos: nenhum por enquanto.",
+    "Índice composto: só o de conteúdos (status + ordem), para listar os publicados em ordem.",
     "O Firestore cria sozinho um índice para cada campo, então ordenar o",
     "diário por dataRegistro já funciona sem declarar nada aqui. Índice",
     "declarado à mão só é necessário quando a consulta combina dois ou mais",
@@ -11,7 +11,22 @@
     "montar uma consulta que varra nome, cidade, sintomas ou autodeclaração.",
     "Menos índice também significa menos cópia do dado guardada."
   ],
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "conteudos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ordem",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
   "fieldOverrides": [
     {
       "collectionGroup": "maes",

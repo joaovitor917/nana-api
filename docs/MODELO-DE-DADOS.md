@@ -46,6 +46,8 @@ chats/{chatId}                              ← criado só pela equipe (admin/cr
 ├── membros/{uid}                           ← relação N:N com Mães
 ├── mensagens/{uid_entrada_n}               ← Regra 5: só participantes leem
 └── digitando/{uid}                         ← o "..." de quem está escrevendo
+
+conteudos/{id}                              ← Regra 6: só "publicado" aparece
 ```
 
 ### `maes/{uid}` — entidade Mães
@@ -189,15 +191,31 @@ chats antes de encerrar a conta, e inclui as mensagens dela na exportação. Os
 scripts `admin/excluir-conta.js` e `admin/exportar-dados.js` fazem o mesmo.
 Mensagens de outras participantes nunca entram na exportação.
 
+## Conteúdos
+
+Materiais educativos escritos pela equipe a partir de fontes científicas. O
+texto fica em `dados/conteudos.json` e é carregado com
+`admin/importar-conteudos.js` (ou `IMPORTAR-CONTEUDOS.bat`).
+
+| Campo | Tipo | Observação |
+|---|---|---|
+| `titulo`, `descricao`, `texto` | string | `texto` em parágrafos separados por linha em branco |
+| `categoria` | string | `SAUDE_NA_GESTACAO`, `POS_PARTO`, `SAUDE_MENTAL`, `MEUS_DIREITOS` |
+| `tipo` | string | `ARTIGO` |
+| `status` | string | `publicado` ou `rascunho` (Regra 6) |
+| `ordem` | número | ordem de exibição |
+| `fontes` | lista | cada uma com `referencia`, `tipo`, `doi`, `url` |
+| `dataPublicacao`, `atualizadoEm` | timestamp | preenchidos pelo script |
+
+Todo conteúdo de saúde precisa de pelo menos uma fonte: o script recusa sem.
+O app só lê, e só o que está publicado; ninguém escreve pelo celular.
+
 ## O que ainda não existe
 
-Consultas e Conteúdos estão no documento do grupo, mas
-ainda não têm tela no aplicativo. As regras **negam** essas coleções por
+Consultas estão no documento do grupo, mas ainda não têm
+tela no aplicativo. As regras **negam** essas coleções por
 enquanto. Coleção liberada "para quando for usada" é exatamente como banco de
 dados vaza.
 
 Quando forem implementadas, dois pontos exigem atenção:
 
-- **Regra 6 (conteúdos).** Só conteúdo publicado aparece. Conteúdo é escrito
-  pela equipe, nunca pelo app: para as usuárias a coleção é somente leitura, e
-  a escrita passa pelo Admin SDK.

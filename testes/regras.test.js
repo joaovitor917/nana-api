@@ -24,7 +24,7 @@ const {
 } = require('@firebase/rules-unit-testing');
 const {
   doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, serverTimestamp,
-  writeBatch, increment, arrayUnion, arrayRemove, query, where, orderBy, limit,
+  writeBatch, increment, arrayUnion, arrayRemove, query, where, orderBy, limit, deleteField,
 } = require('firebase/firestore');
 
 const MAE = 'mae_um';
@@ -53,6 +53,7 @@ async function semRegras(fn) {
 /** Cadastro mínimo válido de uma mãe. */
 function mae(extras = {}) {
   return {
+    nome: 'Maria',
     status: 'ativa',
     idade: 28,
     dataCadastro: serverTimestamp(),
@@ -459,9 +460,6 @@ describe('Coleções ainda não implementadas', () => {
     await assertFails(setDoc(doc(comoDona(), 'consultas', 'c1'), { especialidade: 'x' }));
   });
 
-  it('nega conteúdos', async () => {
-    await assertFails(getDoc(doc(comoDona(), 'conteudos', 'c1')));
-  });
 
   it('nega conversas e mensagens', async () => {
     await assertFails(setDoc(doc(comoDona(), 'conversas', 'c1'), { tipo: 'privada' }));
@@ -795,5 +793,86 @@ describe('Chats: quem está digitando', () => {
   it('nega ver quem digita num chat em que não está', async () => {
     await chatCom([OUTRA]);
     await assertFails(getDocs(collection(comoDona(MAE), 'chats', CHAT, 'digitando')));
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Conteúdos (Regra 6: só o publicado aparece)
+// ---------------------------------------------------------------------------
+
+describe('Conteúdos', () => {
+  async function conteudos() {
+    await semRegras(async (db) => {
+      await setDoc(doc(db, 'conteudos', 'pub'), { titulo: 'a', status: 'publicado', ordem: 1 });
+      await setDoc(doc(db, 'conteudos', 'rasc'), { titulo: 'b', status: 'rascunho', ordem: 2 });
+    });
+  }
+
+  it('permite ler conteúdo publicado', async () => {
+    await conteudos();
+    await assertSucceeds(getDoc(doc(comoDona(), 'conteudos', 'pub')));
+  });
+
+  it('nega ler rascunho', async () => {
+    await conteudos();
+    await assertFails(getDoc(doc(comoDona(), 'conteudos', 'rasc')));
+  });
+
+  it('permite listar filtrando os publicados, em ordem', async () => {
+    await conteudos();
+    const q = query(collection(comoDona(), 'conteudos'),
+      where('status', '==', 'publicado'), orderBy('ordem'));
+    await assertSucceeds(getDocs(q));
+  });
+
+  it('nega listar sem filtrar os publicados', async () => {
+    await conteudos();
+    await assertFails(getDocs(collection(comoDona(), 'conteudos')));
+  });
+
+  it('nega a quem não entrou ou não verificou o e-mail', async () => {
+    await conteudos();
+    await assertFails(getDoc(doc(deslogada(), 'conteudos', 'pub')));
+    await assertFails(getDoc(doc(semVerificar(), 'conteudos', 'pub')));
+  });
+
+  it('nega escrever conteúdo pelo app', async () => {
+    await assertFails(setDoc(doc(comoDona(), 'conteudos', 'novo'), { titulo: 'x', status: 'publicado' }));
+  });
+});
+
+describe('Diário: sentimento e texto no mesmo dia', () => {
+  it('permite juntar sentimento e texto e depois apagar só o texto', async () => {
+    const db = comoDona();
+    const ref = doc(db, 'maes', MAE, 'diario_cuidado', '2026-11-20');
+    await assertSucceeds(setDoc(ref, { dataRegistro: '2026-11-20', sentimento: 'CALMA',
+      criadoEm: serverTimestamp(), atualizadoEm: serverTimestamp() }, { merge: true }));
+    const criado = (await getDoc(ref)).data().criadoEm;
+    await assertSucceeds(setDoc(ref, { dataRegistro: '2026-11-20', descricao: 'Hoje foi um dia bom.',
+      criadoEm: criado, atualizadoEm: serverTimestamp() }, { merge: true }));
+    const d = (await getDoc(ref)).data();
+    if (d.sentimento !== 'CALMA' || d.descricao !== 'Hoje foi um dia bom.') throw new Error('merge perdeu dados');
+    await assertSucceeds(updateDoc(ref, { descricao: deleteField(), atualizadoEm: serverTimestamp() }));
+  });
+
+  it('nega texto com mais de 2000 caracteres', async () => {
+    const ref = doc(comoDona(), 'maes', MAE, 'diario_cuidado', '2026-11-21');
+    await assertFails(setDoc(ref, { dataRegistro: '2026-11-21', descricao: 'a'.repeat(2001),
+      criadoEm: serverTimestamp(), atualizadoEm: serverTimestamp() }));
+  });
+});
+
+describe('Mães: nome obrigatório', () => {
+  it('nega cadastro sem nome', async () => {
+    const { nome, ...semNome } = mae();
+    await assertFails(setDoc(doc(comoDona(), 'maes', MAE), semNome));
+  });
+
+  it('nega nome só com espaços', async () => {
+    await assertFails(setDoc(doc(comoDona(), 'maes', MAE), mae({ nome: '   ' })));
+  });
+
+  it('nega nome com mais de 60 caracteres', async () => {
+    await assertFails(setDoc(doc(comoDona(), 'maes', MAE), mae({ nome: 'a'.repeat(61) })));
   });
 });
